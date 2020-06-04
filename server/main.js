@@ -1,5 +1,5 @@
 import { Meteor } from "meteor/meteor";
-import { Accounts } from 'meteor/accounts-base';
+import { Recipients } from '/imports/api/recipients';
 import { Email } from "meteor/email";
 import { Papa } from "meteor/harrison:papa-parse";
 
@@ -10,10 +10,10 @@ Meteor.startup(() => {
 
   // Get emails of existing users in db
   let emailedUsers = [];
-  Meteor.users.find({})
+  Recipients.find({})
     .fetch()
     .map((user) =>
-      emailedUsers.push(...user.emails.map((email) => email.address))
+      emailedUsers.push(user.email)
     );
 
   const from = process.env.MAIL_URL.substr(
@@ -26,7 +26,6 @@ Meteor.startup(() => {
     Meteor.setTimeout(() => {
       let memberRow = emailsTable[i];
       let email = memberRow[0];
-      let password = 'password';
       let text = `
       We call for the rejection of Senate Bill No. 1083, or the Anti-Terror Bill, for its overbroad definition of what terrorism is, and for violating the 1987 Philippine Constitution.
 
@@ -39,6 +38,7 @@ Meteor.startup(() => {
           if (!emailedUsers.includes(email)) {
             console.log(`Emailing ${email}`);
             Email.send({ from, to: email, subject, text });
+            Recipients.insert({ email })
             console.log(`email sent to ${email}`);
           }
           break;

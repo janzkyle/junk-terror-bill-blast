@@ -28,3 +28,5 @@ meteor run MAIL_URL="smtp://<email>:<password>@smtp.gmail.com:587"
 ```
 
 To change the email template, go to server/main.js and replace the value of `text` inside `sendEmail()` function.
+
+In case of error during email sending, press ctrl+c to stop the process then re-run the app using the command above. This will not re-send an email to those who have been already emailed.
